@@ -365,7 +365,7 @@ async def on_message(message):
             await votesof(update,context)
         if iscmd(cmd,"fee"):
             await fee(update,context)
-    except E:
+    except:
         await message.channel.send('Sorry err... beep!')
 
               
