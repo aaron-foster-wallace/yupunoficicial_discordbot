@@ -189,27 +189,26 @@ async def pago_real(voteid):
     else:
         return "Errore: Post not found"
 
-async def top_payment(update, context):
+async def getpayment(update, context):
     text=""
     if(len(context.args)<1):
-       update.message.reply_text("usage: /top_payment eos_user \n"   
-                                 +"usage: /top_payment eos_user position_number##\n")
+       update.message.reply_text("usage: /getpayment eos_user \n"   
+                                 +"usage: /getpayment eos_user position_number##\n")
        return
  
     user = context.args[0]
     pos = 0
     if(len(context.args)>1):
         pos = context.args[1]
+    
     r = requests.get("https://eos.hyperion.eosrio.io/v2/history/get_actions?account={}&limit=1&skip={}&filter=*:transfer&transfer.to={}".format(user,pos,user))
+     
     j=r.json()
     a=j["actions"][0]
-    text+="==============="
-    text+="\n"    
-    text+="    PAGO:"
+
+    text+="<b>PAGO:</b>"
     text+="\n"
-    text+="==============="
-    text+="\n"    
-    text+="\n"    
+    text+="\n"        
     text+="FECHA HORA:"+a["timestamp"][:16]
     text+="\n"   
     trx_id=a["trx_id"]
@@ -219,15 +218,33 @@ async def top_payment(update, context):
     text+="\n"
     text+="Reason:"+d["memo"]
     text+="\n"
-    r2 = requests.get("https://eosauthority.com/api/spa/dfuse/transactions/{}?network=eos".format(trx_id))
+    """
+         "amount": 0.0001,
+          "symbol": "YUP",
+          "memo": "Yup Curator Rewards",
+          "quantity": "0.0001 YUP"
+    """
+    r2 = requests.get("https://eos.hyperion.eosrio.io/v2/history/get_transaction?id={}".format(trx_id))
     global j2
     
     j2=r2.json()
-    voteid= j2["execution_trace"]["action_traces"][0]["act"]["data"]["voteid"]
+    acs=j2.get('actions', False) or False
+    if not acs: raise "Err bad response"
+    i=0
+    while i<len(acs) and  acs[i]["act"]["name"]=="noop": i+=1
+    act=acs[i]["act"]
+    if "from" in act["data"] and act["data"]["from"] == 'pool.yup':
+        await update.message.reply_text("Payment #{}: Recived a tip from YUP TEAM of: {}".format(pos,act["data"]["quantity"]))
+        return
+    if "voteid" not in act["data"]:
+        await update.message.reply_text("Payment #{}: Unknow payment type".format(pos))        
+        return    
+    
+    voteid= act["data"]["voteid"]
     text+="POSTURL: "
-    text+=await pago_real(voteid) 
-    await update.message.reply_text(text)
-
+    text+="<code>"+pago_real(voteid) +"</code>"
+    await update.message.reply_html(text)
+ 
 async def yup(update, context):
     await update.message.reply_text(
         random.choice(
