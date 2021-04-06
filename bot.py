@@ -11,8 +11,7 @@ from dateutil import tz
 import random
 from markdownify import markdownify
 
-#from collections import namedtuple 
-#CommandHandler = namedtuple('CommandHandler',['name','age','DOB'])  
+
 
 
 
@@ -39,6 +38,8 @@ class TeleContext(object):
 
 
 #### END TELEGRAM PACH ########
+
+
 async def start(update, context):
     """Send a message when the command /start is issued."""
     html="""       
@@ -93,7 +94,6 @@ def real_postidof(url):
 dict_cat={"popularity":"♥️","intelligence":"💡","funny":"😂","easy":"😎","interesting":"⚠️","useful":"🛠️","knowledgeable":"🎓","engaging":"🤔","chill":"❄️","affordable":"💲","beautiful":"🌸","trustworthy": "✅", "wouldelect": "🗳️", "agreewith": "👍", "original": "🦄" }
 
 async def votesof(update, context):
-    global j
     url = " ".join(context.args).strip()
     postid = real_postidof(url)
     if not ("postid" in postid):
@@ -220,12 +220,6 @@ async def top_payment(update, context):
     text+="\n"
     text+="Reason:"+d["memo"]
     text+="\n"
-    """
-         "amount": 0.0001,
-          "symbol": "YUP",
-          "memo": "Yup Curator Rewards",
-          "quantity": "0.0001 YUP"
-    """
     r2 = requests.get("https://eosauthority.com/api/spa/dfuse/transactions/{}?network=eos".format(trx_id))
     global j2
     
@@ -262,21 +256,7 @@ async def yup(update, context):
 """
         ]))
       
-async def coffe(update, context):
-    html="""
-<b>Buy Me a Coffe:</b>    
 
-    You can donate some EOS or YUP    to <b>yupxtelegram</b>  EOS Account
-
-<b>Camprame un café:</b>    
-
-    Puede donar algunos EOS o YUP a la cuenta de <b>yupxtelegram</b> EOS
-    
-    ✌(◕‿-)✌     \\̅_̅/̷̚ʾ \\̅_̅/̷̚ʾ. 
-stating by just  0.1 YUP 
-"""
-
-    await update.message.reply_html(html)
 
 async def power(update, context):
  
@@ -373,12 +353,6 @@ async def on_message(message):
         await votesof(update,context)
     if iscmd(cmd,"votosde"):
         await votesof(update,context)
-    if iscmd(cmd,"coffe"):
-        await coffe(update,context)
-    if iscmd(cmd,"cafe"):
-        await coffe(update,context)
-    if iscmd(cmd,"donar"):
-        await coffe(update,context)
     if iscmd(cmd,"fee"):
         await fee(update,context)
               
