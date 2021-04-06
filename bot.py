@@ -53,7 +53,6 @@ Hi! I'm <b>YUP Bot!</b> You can ask me YUP questions like:
 <li><code>tp          - </code>$tp<code> &lt;eos_user&gt; [skip]\n\t\t\t  (top_payment shorthand)</code></li>
 <li><code>yup         - </code>$yup<code> ?????????</code></li>
 <li><code>fee         - </code>$fee<code> bridge fees</code></li>
-<li><code>coffe       - </code>$coffe or $cafe <code>\n\t\t\t Buy me a coffe, donation adress</code></li>
 <li><code>help        - </code>$help<code> this text</code></li>
 </ul>
     """
@@ -189,11 +188,11 @@ async def pago_real(voteid):
     else:
         return "Errore: Post not found"
 
-async def getpayment(update, context):
+async def top_payment(update, context):
     text=""
     if(len(context.args)<1):
-       update.message.reply_text("usage: /getpayment eos_user \n"   
-                                 +"usage: /getpayment eos_user position_number##\n")
+       update.message.reply_text("usage: /top_payment eos_user \n"   
+                                 +"usage: /top_payment eos_user position_number##\n")
        return
  
     user = context.args[0]
@@ -218,12 +217,7 @@ async def getpayment(update, context):
     text+="\n"
     text+="Reason:"+d["memo"]
     text+="\n"
-    """
-         "amount": 0.0001,
-          "symbol": "YUP",
-          "memo": "Yup Curator Rewards",
-          "quantity": "0.0001 YUP"
-    """
+ 
     r2 = requests.get("https://eos.hyperion.eosrio.io/v2/history/get_transaction?id={}".format(trx_id))
     global j2
     
