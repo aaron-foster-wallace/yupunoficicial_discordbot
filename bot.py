@@ -236,7 +236,7 @@ async def top_payment(update, context):
     
     voteid= act["data"]["voteid"]
     text+="POSTURL: "
-    text+="<code>"+pago_real(voteid) +"</code>"
+    text+="<code>"+ (await pago_real(voteid)) +"</code>"
     await update.message.reply_html(text)
  
 async def yup(update, context):
