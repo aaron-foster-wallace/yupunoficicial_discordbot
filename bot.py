@@ -14,7 +14,6 @@ from markdownify import markdownify
 
 
 
-
 #### BEGIN TELEGRAM PACH ########
 
 
@@ -316,45 +315,48 @@ async def on_message(message):
     if message.author == client.user:
         return
 
+    try:
+	    if message.content.startswith('$hello'):
+	        await message.channel.send('Hello!')
 
-    if message.content.startswith('$hello'):
-        await message.channel.send('Hello!')
+	    #Bring Commands implemented on telegram    
+	    txt=message.content
+	    if len(txt.splitlines())>1:        
+	        return
+	    cmd,*args=txt.split()
 
-    #Bring Commands implemented on telegram    
-    txt=message.content
-    if len(txt.splitlines())>1:        
-        return
-    cmd,*args=txt.split()
+	    update=TeleWrapper(message)
+	    context=TeleContext(args)
 
-    update=TeleWrapper(message)
-    context=TeleContext(args)
+	    if iscmd(cmd,"start"):
+	        await start(update,context)
+	    if iscmd(cmd,"help"):
+	        await help(update,context)
+	    if iscmd(cmd,"postidof"):
+	        await postidof(update,context)
+	    if iscmd(cmd,"votelink"):
+	        await votelink(update,context)
+	    if iscmd(cmd,"yup"):
+	        await yup(update,context)
+	    if iscmd(cmd,"votedump"):
+	        await votedump(update,context)
+	    if iscmd(cmd,"power"):
+	        await power(update,context)
+	    if iscmd(cmd,"price"):
+	        await price(update,context)
+	    if iscmd(cmd,"top_payment"):
+	        await top_payment(update,context)
+	    if iscmd(cmd,"tp"):
+	        await top_payment(update,context)
+	    if iscmd(cmd,"votesof"):
+	        await votesof(update,context)
+	    if iscmd(cmd,"votosde"):
+	        await votesof(update,context)
+	    if iscmd(cmd,"fee"):
+	        await fee(update,context)
+	except E:
+	    await message.channel.send('Sorry err... beep!')
 
-    if iscmd(cmd,"start"):
-        await start(update,context)
-    if iscmd(cmd,"help"):
-        await help(update,context)
-    if iscmd(cmd,"postidof"):
-        await postidof(update,context)
-    if iscmd(cmd,"votelink"):
-        await votelink(update,context)
-    if iscmd(cmd,"yup"):
-        await yup(update,context)
-    if iscmd(cmd,"votedump"):
-        await votedump(update,context)
-    if iscmd(cmd,"power"):
-        await power(update,context)
-    if iscmd(cmd,"price"):
-        await price(update,context)
-    if iscmd(cmd,"top_payment"):
-        await top_payment(update,context)
-    if iscmd(cmd,"tp"):
-        await top_payment(update,context)
-    if iscmd(cmd,"votesof"):
-        await votesof(update,context)
-    if iscmd(cmd,"votosde"):
-        await votesof(update,context)
-    if iscmd(cmd,"fee"):
-        await fee(update,context)
               
 
 
