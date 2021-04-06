@@ -1,0 +1,5 @@
+requests==2.18.4
+python-telegram-bot==12.7
+dateutils==0.6.12
+discord==1.0.1
+discord.py==1.6.0
