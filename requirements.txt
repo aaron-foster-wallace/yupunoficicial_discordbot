@@ -3,4 +3,4 @@ python-telegram-bot==12.7
 dateutils==0.6.12
 discord==1.0.1
 discord.py==1.6.0
-markdownify.py==1.15.0
+markdownify==0.6.5
