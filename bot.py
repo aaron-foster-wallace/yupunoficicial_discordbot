@@ -266,20 +266,51 @@ async def yup(update, context):
 """
         ]))
       
+def percentbar(percent):
+    rt=100
+    rp=percent if percent<=rt else rt
+    ut=18
+    up=rp/rt*ut
+    up=int(round(up))
+    un=ut-up
+    return "█"*up+"▒"*un
 
-
-async def power(update, context):
- 
+def getuser(user):
+    r = requests.get("https://api.yup.io/accounts/"+str(user))
+    j= r.json()
+    return j
+    
+async def  power(update, context):
     """ the user message."""   
+    if len(context.args) !=1:
+        await update.message.reply_text("usage: /power <yup_user>")
+        
     user = " ".join(context.args).strip()    
     r = requests.get("https://api.yup.io/accounts/actionusage/"+str(user))
             
     j=r.json()
-    j["lastReset_UTC"]=datetime.datetime.utcfromtimestamp( int(j["lastReset"])/1000).isoformat()[:16]
-    j["lastReset_VNZ"]=datetime.datetime.fromtimestamp( int(j["lastReset"])/1000,tz=tz.gettz('America/Caracas')).isoformat()[:16]
-    #time.strftime("%x %X", time.localtime(j["lastReset"]/1000 ))
     
-    await update.message.reply_text(json.dumps(j, indent=4, sort_keys=True) )
+    uj=getuser(user)    
+    yup=float(uj["balance"]["YUP"])
+    
+    
+    totalvotepower=20 if yup<=0.5 else 30 if yup <= 100 else 40
+    
+    percent=100-int(j['createVoteCount'])/totalvotepower*100
+    bar=percentbar(percent)
+    
+    
+    lr=datetime.datetime.utcfromtimestamp( int(j["lastReset"])/1000)
+    delt=datetime.datetime.now()-lr
+    delt=int(delt.total_seconds())
+    delt-=delt%60
+    
+    percent_text= "{:>8} %\n{}\n".format(round(percent),bar)
+    lastreset_str="Last reset:\n{} ago".format(humanize.precisedelta(delt))
+
+    await update.message.reply_text(percent_text+lastreset_str )
+
+
 
      
     
