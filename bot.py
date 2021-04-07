@@ -11,8 +11,8 @@ from dateutil import tz
 import random
 from markdownify import markdownify
 
-
-
+import traceback
+import humanize
 
 #### BEGIN TELEGRAM PACH ########
 
@@ -396,7 +396,8 @@ async def on_message(message):
             await votesof(update,context)
         if iscmd(cmd,"fee"):
             await fee(update,context)
-    except:
+    except:        
+        traceback.print_exc()
         await message.channel.send('Sorry err... beep!')
 
               
