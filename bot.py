@@ -245,11 +245,11 @@ async def uservotes(update, context):
     global j,j2,trx_id,act
     text=""
     if(len(context.args)<1):
-       return update.message.reply_text("usage: /uservotes eos_user \n"   
+        return await  update.message.reply_text("usage: /uservotes eos_user \n"   
                                  +"usage: /uservotes eos_user position_number##\n"
                                  +"\n"
                                  +"          the space between account and pos can be omited\n")
-       
+        
     lim=10
     user = context.args[0]
     pos = 0
@@ -265,13 +265,13 @@ async def uservotes(update, context):
     
     
     if len(user)!=12:
-        return update.message.reply_text("The eos_user must have 12 characters")        
+        return await update.message.reply_text("The eos_user must have 12 characters")        
 
     try:
         r = requests.get("https://api.yup.io/votes/voter/{}?start={}&limit={}".format(user,pos,lim))
         j=r.json()
         if 'statusCode' in j and j['statusCode']==404:
-            return update.message.reply_html(j["message"])             
+            return await  update.message.reply_html(j["message"])             
         
         v=j[0]
         html=""
@@ -283,10 +283,10 @@ async def uservotes(update, context):
                     v["post"]["caption"],
                     dict_cat[v["category"]] if v["category"] in dict_cat else "?" ,
                     valstr ))  
-        return update.message.reply_html(html)         
+        return await  update.message.reply_html(html)         
     except:        
         traceback.print_exc()
-        return update.message.reply_text('Sorry err... beep!\n'+
+        return await  update.message.reply_text('Sorry err... beep!\n'+
                                    "Try again latter or maybe your query is wrong.. idk")   
 
 async def yup(update, context):
