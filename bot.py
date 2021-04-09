@@ -53,6 +53,8 @@ Hi! I'm <b>YUP Bot!</b> You can ask me YUP questions like:
 <li><code>tp          - </code>$tp<code> &lt;eos_user&gt; [skip]\n\t\t\t  (top_payment shorthand)</code></li>
 <li><code>yup         - </code>$yup<code> ?????????</code></li>
 <li><code>fee         - </code>$fee<code> bridge fees</code></li>
+<code>uservotes   - </code>/uservotes<code> &lt;eos_user&gt; [skip] \n\t\t\t  get the last 10 votes,\n\t\t\t skiping ## amount votes if is specified</code>
+<code>uv          - </code>/uv<code> &lt;eos_user&gt; [skip]\n\t\t\t  (uservotes shorthand)</code>
 <li><code>help        - </code>$help<code> this text</code></li>
 </ul>
     """
@@ -238,7 +240,55 @@ async def top_payment(update, context):
     text+="POSTURL: "
     text+="<code>"+ (await pago_real(voteid)) +"</code>"
     await update.message.reply_html(text)
- 
+
+async def uservotes(update, context):
+    global j,j2,trx_id,act
+    text=""
+    if(len(context.args)<1):
+       return update.message.reply_text("usage: /uservotes eos_user \n"   
+                                 +"usage: /uservotes eos_user position_number##\n"
+                                 +"\n"
+                                 +"          the space between account and pos can be omited\n")
+       
+    lim=10
+    user = context.args[0]
+    pos = 0
+    if(len(context.args)==1):
+        if len(user)>12:
+            posx=user[12:]
+            if posx.isnumeric():
+                pos=posx
+                user=user[:12]                
+            
+    elif(len(context.args)>1):
+        pos = context.args[1] 
+    
+    
+    if len(user)!=12:
+        return update.message.reply_text("The eos_user must have 12 characters")        
+
+    try:
+        r = requests.get("https://api.yup.io/votes/voter/{}?start={}&limit={}".format(user,pos,lim))
+        j=r.json()
+        if 'statusCode' in j and j['statusCode']==404:
+            return update.message.reply_html(j["message"])             
+        
+        v=j[0]
+        html=""
+        for num, v in enumerate(j, start=1):
+            val=(int(v["rating"])+2 if v["like"] else 3-int(v["rating"]) )
+            valstr="●"*val+"○"*(5-val)
+            
+            html+=("<code>{}</code>\n<code>  ===>  {} {:>5}</code>\n".format(
+                    v["post"]["caption"],
+                    dict_cat[v["category"]] if v["category"] in dict_cat else "?" ,
+                    valstr ))  
+        return update.message.reply_html(html)         
+    except:        
+        traceback.print_exc()
+        return update.message.reply_text('Sorry err... beep!\n'+
+                                   "Try again latter or maybe your query is wrong.. idk")   
+
 async def yup(update, context):
     await update.message.reply_text(
         random.choice(
@@ -396,6 +446,9 @@ async def on_message(message):
             await votesof(update,context)
         if iscmd(cmd,"fee"):
             await fee(update,context)
+        if iscmd(cmd,"uservotes") or iscmd(cmd,"uv"):
+            await uservotes(update,context)
+
     except:        
         traceback.print_exc()
         await message.channel.send('Sorry err... beep!')
