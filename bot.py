@@ -193,14 +193,28 @@ async def pago_real(voteid):
 async def top_payment(update, context):
     text=""
     if(len(context.args)<1):
-       update.message.reply_text("usage: /top_payment eos_user \n"   
-                                 +"usage: /top_payment eos_user position_number##\n")
+       await update.message.reply_text("usage: /top_payment eos_user \n"   
+                                 +"usage: /top_payment eos_user position_number##\n"
+                                 +"\n"
+                                 +"          the space between account and pos can be omited\n")
+
        return
  
     user = context.args[0]
     pos = 0
-    if(len(context.args)>1):
-        pos = context.args[1]
+    if(len(context.args)==1):
+        if len(user)>12:
+            posx=user[12:]
+            if posx.isnumeric():
+                pos=posx
+                user=user[:12]                
+            
+    elif(len(context.args)>1):
+        pos = context.args[1] 
+    
+    
+    if len(user)!=12:
+        return await update.message.reply_text("The eos_user must have 12 characters")        
     
     r = requests.get("https://eos.hyperion.eosrio.io/v2/history/get_actions?account={}&limit=1&skip={}&filter=*:transfer&transfer.to={}".format(user,pos,user))
      
